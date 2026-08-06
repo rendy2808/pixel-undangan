@@ -5,965 +5,644 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>♥ MapleStory Wedding — Dewi & Rama ♥</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+<script>p5.disableFriendlyErrors = true;</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/p5.min.js"></script>
 <style>
 /* ═══════════════════════════════════════════════
-   MAPLESTORY WEDDING — DESIGN TOKENS
+   HTML OVERLAY — content di atas canvas
    ═══════════════════════════════════════════════ */
-
-:root {
-  --sky-top:    #5BA4E6;
-  --sky-mid:    #8EC8F2;
-  --sky-bot:    #C5E4F7;
-  --cloud:      #FFFFFF;
-  --grass:      #7CCD7C;
-  --grass-dark: #5DA85D;
-  --gold:       #DAA520;
-  --gold-light: #F0D060;
-  --gold-dark:  #B8860B;
-  --pink:       #FF8FAB;
-  --pink-glow:  #FFB8D4;
-  --purple:     #C8A2FF;
-  --brown:      #8B6914;
-  --brown-dark: #5C3D0E;
-  --panel-bg:   #FFFEF8;
-  --text:       #4A3728;
-  --text-dark:  #2C1810;
-}
-
 * { margin:0; padding:0; box-sizing:border-box; }
-
 html { scroll-behavior:smooth; }
-
 body {
-  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 40%, var(--sky-bot) 70%, #E8F4E8 95%);
-  color: var(--text);
+  background: #5BA4E6;
   font-family: 'Silkscreen', monospace;
   font-size: 13px;
-  line-height: 1.7;
+  color: #4A3728;
   overflow-x: hidden;
-  min-height: 100vh;
 }
-
-/* ═══════════════════════════════════════════════
-   CLOUDS LAYER
-   ═══════════════════════════════════════════════ */
-
-.clouds-layer {
-  position: fixed; top:0; left:0; width:100%; height:100%;
-  pointer-events: none; z-index: 0;
-  overflow: hidden;
+#p5-canvas {
+  position: fixed; top:0; left:0; z-index:0;
+  pointer-events: none;
 }
-.cloud {
-  position: absolute;
-  background: var(--cloud);
-  border-radius: 50%;
-  opacity: 0.85;
-  box-shadow:
-    30px -10px 0 8px var(--cloud),
-    60px 5px 0 12px var(--cloud),
-    90px -5px 0 6px var(--cloud),
-    -20px 10px 0 10px var(--cloud);
+#content {
+  position: relative; z-index:1;
+  pointer-events: none;
 }
-.cloud::after {
-  content: '';
-  position: absolute;
-  bottom: -14px; left: 10px;
-  width: 120px; height: 24px;
-  background: var(--cloud);
-  border-radius: 12px;
-}
-.cloud:nth-child(1) { top:6%; left:5%; width:60px; height:28px; animation: float-cloud 28s linear infinite; }
-.cloud:nth-child(2) { top:12%; left:45%; width:80px; height:34px; animation: float-cloud 22s linear infinite reverse; opacity:0.7; }
-.cloud:nth-child(3) { top:4%; left:75%; width:70px; height:30px; animation: float-cloud 32s linear infinite; }
-.cloud:nth-child(4) { top:18%; left:20%; width:90px; height:36px; animation: float-cloud 25s linear infinite reverse; opacity:0.65; }
-.cloud:nth-child(5) { top:8%; left:90%; width:65px; height:28px; animation: float-cloud 30s linear infinite; opacity:0.75; }
+#content > * { pointer-events: auto; }
 
-@keyframes float-cloud {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(120vw); }
-}
-
-/* ═══════════════════════════════════════════════
-   MAIN CONTENT — vertical map
-   ═══════════════════════════════════════════════ */
-
-#map {
-  position: relative;
-  z-index: 1;
-  max-width: 560px;
+.container {
+  max-width: 520px;
   margin: 0 auto;
-  padding: 30px 16px 60px;
+  padding: 0 16px 60px;
 }
 
-/* ═══════════════════════════════════════════════
-   GRASS PLATFORM
-   ═══════════════════════════════════════════════ */
-
-.platform {
-  position: relative;
-  margin: 10px 0 24px;
-  padding: 24px 20px 32px;
-  background: var(--panel-bg);
-  border: 3px solid var(--gold-dark);
+/* Platform cards */
+.card {
+  background: #FFFEF8;
+  border: 3px solid #B8860B;
   border-radius: 4px;
-  box-shadow:
-    0 0 0 2px var(--panel-bg),
-    0 0 0 5px var(--gold-dark),
-    0 8px 0 0 rgba(0,0,0,0.08),
-    0 0 20px rgba(218,165,32,0.15);
+  box-shadow: 0 0 0 2px #FFFEF8, 0 0 0 5px #B8860B, 0 8px 0 rgba(0,0,0,0.06), 0 0 25px rgba(218,165,32,0.12);
+  padding: 24px 20px;
+  margin: 0 0 20px;
+  position: relative;
 }
-
-/* Grass decoration on top of platform */
-.platform::before {
-  content: '';
-  position: absolute;
-  top: -12px; left: -3px; right: -3px;
-  height: 14px;
-  background:
-    repeating-linear-gradient(90deg,
-      var(--grass) 0px, var(--grass-dark) 3px, var(--grass) 6px,
-      var(--grass-dark) 8px, var(--grass) 10px, var(--grass) 14px);
+.card::before {
+  content: ''; position: absolute; top: -14px; left: -3px; right: -3px; height: 16px;
+  background: repeating-linear-gradient(90deg, #7CCD7C 0px, #5DA85D 3px, #7CCD7C 6px, #5DA85D 9px, #7CCD7C 12px);
   border-radius: 2px 2px 0 0;
-  border: 3px solid var(--gold-dark);
-  border-bottom: none;
+  border: 3px solid #B8860B; border-bottom: none;
+}
+.card-title {
+  font-family: 'Press Start 2P', monospace; font-size: 9px;
+  color: #FFFEF8;
+  background: linear-gradient(180deg, #DAA520, #B8860B);
+  margin: -24px -20px 16px; padding: 10px 14px;
+  text-align: center; letter-spacing: 1px;
 }
 
-/* Window header bar (like MS quest window title bar) */
-.window-title {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 9px;
-  color: var(--panel-bg);
-  background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 100%);
-  margin: -24px -20px 16px;
-  padding: 10px 14px;
-  text-align: center;
-  letter-spacing: 1px;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+/* Hero section */
+.hero-spacer { height: 40vh; }
+.hero-section { text-align: center; margin-bottom: 24px; }
+.hero-names {
+  font-family: 'Press Start 2P', monospace; font-size: 16px;
+  color: #FF8FAB; text-shadow: 2px 2px 0 rgba(180,60,80,0.3);
+  margin-bottom: 8px; line-height: 1.8;
+}
+.hero-date { font-size: 11px; color: #5BA4E6; margin-bottom: 8px; }
+.hero-speech {
+  display: inline-block; background: #FFF; border: 2px solid #8B6914; border-radius: 8px;
+  padding: 10px 18px; font-family: 'VT323',monospace; font-size: 17px;
+  position: relative; box-shadow: 2px 2px 0 rgba(0,0,0,0.06);
+}
+.hero-speech::after {
+  content:''; position:absolute; top:-10px; left:50%; transform:translateX(-50%);
+  width:0;height:0; border-left:8px solid transparent; border-right:8px solid transparent;
+  border-bottom:10px solid #8B6914;
 }
 
-/* ═══════════════════════════════════════════════
-   CHIBI CHARACTERS (CSS Pixel Art)
-   ═══════════════════════════════════════════════ */
-
-.character-stage {
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  gap: 16px;
-  padding: 20px 0 12px;
-  position: relative;
-}
-
-/* Chibi bride — big head, small body, veil */
-.chibi-bride {
-  width: 4px; height: 4px;
-  margin: 12px 28px 28px 12px;
-  position: relative;
-  image-rendering: pixelated;
-  animation: idle-bounce 2s ease-in-out infinite;
-  box-shadow:
-    /* Hair bun + veil top */
-    4px -8px rgba(255,255,255,0.6), 8px -8px rgba(255,255,255,0.8), 12px -8px rgba(255,255,255,0.8), 16px -8px rgba(255,255,255,0.8), 20px -8px rgba(255,255,255,0.8), 24px -8px rgba(255,255,255,0.6),
-    /* Hair */
-    0px -4px #5D4037, 4px -4px #5D4037, 8px -4px #6D4C41, 12px -4px #6D4C41, 16px -4px #6D4C41, 20px -4px #6D4C41, 24px -4px #5D4037, 28px -4px #5D4037,
-    /* Face */
-    0px 0 #FFCCBC, 4px 0 #FFCCBC, 8px 0 #FFCCBC, 12px 0 #FFCCBC, 16px 0 #FFCCBC, 20px 0 #FFCCBC, 24px 0 #FFCCBC, 28px 0 #FFCCBC,
-    /* Big eyes */
-    4px 4px #333, 8px 4px #FFF, 12px 4px #FFCCBC, 16px 4px #FFCCBC, 20px 4px #FFF, 24px 4px #333,
-    /* Blush */
-    4px 8px #FFCCBC, 8px 8px #FFB8B8, 12px 8px #FFCCBC, 16px 8px #FFCCBC, 20px 8px #FFB8B8, 24px 8px #FFCCBC,
-    /* Mouth */
-    12px 12px #FF8FAB, 16px 12px #FF8FAB,
-    /* Dress top */
-    4px 16px #FFF, 8px 16px #FFF, 12px 16px #FFF, 16px 16px #FFF, 20px 16px #FFF, 24px 16px #FFF,
-    /* Dress bottom */
-    0px 20px #FF8FAB, 4px 20px #FF8FAB, 8px 20px #FF8FAB, 12px 20px #FF8FAB, 16px 20px #FF8FAB, 20px 20px #FF8FAB, 24px 20px #FF8FAB, 28px 20px #FF8FAB,
-    0px 24px #FF8FAB, 8px 24px #FF8FAB, 12px 24px #FF8FAB, 16px 24px #FF8FAB, 20px 24px #FF8FAB, 28px 24px #FF8FAB;
-}
-
-/* Chibi groom */
-.chibi-groom {
-  width: 4px; height: 4px;
-  margin: 12px 28px 28px 12px;
-  position: relative;
-  image-rendering: pixelated;
-  animation: idle-bounce 2s ease-in-out 0.3s infinite;
-  box-shadow:
-    /* Hair */
-    4px -4px #1A1A1A, 8px -4px #1A1A1A, 12px -4px #2C2C2C, 16px -4px #2C2C2C, 20px -4px #1A1A1A, 24px -4px #1A1A1A,
-    /* Face */
-    0px 0 #FFCCBC, 4px 0 #FFCCBC, 8px 0 #FFCCBC, 12px 0 #FFCCBC, 16px 0 #FFCCBC, 20px 0 #FFCCBC, 24px 0 #FFCCBC, 28px 0 #FFCCBC,
-    /* Eyes */
-    4px 4px #333, 8px 4px #FFF, 12px 4px #FFCCBC, 16px 4px #FFCCBC, 20px 4px #FFF, 24px 4px #333,
-    /* Mouth — slight smile */
-    12px 8px #333, 16px 8px #333,
-    /* Suit */
-    4px 12px #1A3A5C, 8px 12px #1A3A5C, 12px 12px #1A3A5C, 16px 12px #1A3A5C, 20px 12px #1A3A5C, 24px 12px #1A3A5C,
-    0px 16px #1A3A5C, 4px 16px #1A3A5C, 8px 16px #FFF, 12px 16px #1A3A5C, 16px 16px #1A3A5C, 20px 16px #FFF, 24px 16px #1A3A5C, 28px 16px #1A3A5C,
-    /* Pants */
-    4px 20px #1A1A1A, 8px 20px #1A1A1A, 12px 20px #1A1A1A, 16px 20px #1A1A1A, 20px 20px #1A1A1A, 24px 20px #1A1A1A,
-    4px 24px #1A1A1A, 8px 24px #1A1A1A, 12px 24px #1A1A1A, 16px 24px #1A1A1A, 20px 24px #1A1A1A, 24px 24px #1A1A1A;
-}
-
-@keyframes idle-bounce {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-
-/* Heart between couple */
-.couple-heart {
-  font-size: 20px;
-  animation: heart-pop 1.2s ease-in-out infinite;
-  color: var(--pink);
-  text-shadow: 0 0 8px var(--pink-glow);
-}
-@keyframes heart-pop {
-  0%,100% { transform: scale(1); }
-  50% { transform: scale(1.3); }
-}
-
-/* ═══════════════════════════════════════════════
-   SPEECH BUBBLE
-   ═══════════════════════════════════════════════ */
-
-.speech-bubble {
-  position: relative;
-  background: #FFF;
-  border: 3px solid var(--brown);
-  border-radius: 8px;
-  padding: 14px 18px;
-  text-align: center;
-  font-family: 'VT323', monospace;
-  font-size: 18px;
-  color: var(--text-dark);
-  max-width: 320px;
-  margin: 8px auto 0;
-  box-shadow: 3px 3px 0 rgba(0,0,0,0.08);
-}
-.speech-bubble::after {
-  content: '';
-  position: absolute;
-  top: -12px; left: 50%;
-  transform: translateX(-50%);
-  width: 0; height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 12px solid var(--brown);
-}
-.speech-bubble::before {
-  content: '';
-  position: absolute;
-  top: -8px; left: 50%;
-  transform: translateX(-50%);
-  width: 0; height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 9px solid #FFF;
-  z-index: 1;
-}
-
-/* ═══════════════════════════════════════════════
-   QUEST ITEMS
-   ═══════════════════════════════════════════════ */
-
-.quest-list {
-  list-style: none;
-}
-
+/* Quest list */
 .quest-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 0;
-  border-bottom: 1px dashed rgba(139,105,20,0.25);
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; border-bottom: 1px dashed rgba(139,105,20,0.2);
 }
-.quest-item:last-child { border-bottom: none; }
-
-.quest-checkbox {
-  font-size: 18px;
-  flex-shrink: 0;
-  margin-top: -1px;
-  color: var(--grass);
-}
-.quest-checkbox.done { color: var(--gold); }
-
-.quest-info { flex: 1; }
-.quest-name {
-  font-family: 'VT323', monospace;
-  font-size: 18px;
-  color: var(--text-dark);
-  margin-bottom: 2px;
-}
-.quest-loc {
-  font-size: 11px;
-  color: #6B5B4F;
-  line-height: 1.6;
-}
-.quest-loc .icon { margin-right: 4px; }
-
-.quest-reward {
-  font-family: 'Silkscreen', monospace;
-  font-size: 8px;
-  color: var(--gold-dark);
-  background: rgba(218,165,32,0.12);
-  padding: 3px 8px;
-  border-radius: 3px;
-  white-space: nowrap;
-  align-self: center;
+.quest-item:last-child { border-bottom:none; }
+.quest-check { font-size: 16px; color: #7CCD7C; flex-shrink:0; }
+.quest-check.done { color: #DAA520; }
+.quest-info { flex:1; }
+.quest-name { font-family:'VT323',monospace; font-size:17px; margin-bottom:2px; }
+.quest-loc { font-size:11px; color:#6B5B4F; line-height:1.6; }
+.quest-exp {
+  font-family:'Silkscreen',monospace; font-size:8px; color:#B8860B;
+  background:rgba(218,165,32,0.1); padding:3px 8px; border-radius:3px;
+  align-self:center; white-space:nowrap;
 }
 
-/* ═══════════════════════════════════════════════
-   STARS / SPARKLES
-   ═══════════════════════════════════════════════ */
-
-.sparkle {
-  position: absolute;
-  font-size: 12px;
-  pointer-events: none;
-  animation: sparkle-float 3s ease-in-out infinite;
+/* HP bar */
+.hp-bar {
+  margin-top:12px; border:2px solid #5C3D0E; background:#2C1810;
+  height:20px; position:relative; overflow:hidden;
 }
-.sparkle:nth-child(1) { top: 5%; left: 10%; animation-delay: 0s; }
-.sparkle:nth-child(2) { top: 15%; left: 85%; animation-delay: 1s; }
-.sparkle:nth-child(3) { top: 30%; left: 5%; animation-delay: 0.5s; }
-.sparkle:nth-child(4) { top: 50%; left: 90%; animation-delay: 2s; }
-.sparkle:nth-child(5) { top: 70%; left: 8%; animation-delay: 1.5s; }
-.sparkle:nth-child(6) { top: 85%; left: 88%; animation-delay: 0.8s; }
-
-@keyframes sparkle-float {
-  0%,100% { transform: translateY(0) scale(1); opacity:0.6; }
-  50% { transform: translateY(-12px) scale(1.4); opacity:1; }
+.hp-fill {
+  height:100%; width:73%;
+  background:linear-gradient(180deg,#FF6B6B,#CC4444,#AA2222);
+  position:relative;
+}
+.hp-fill::after {
+  content:''; position:absolute; top:2px; left:4px; right:4px; height:4px;
+  background:rgba(255,255,255,0.25); border-radius:1px;
+}
+.hp-text {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:'Silkscreen',monospace; font-size:8px; color:#FFF; text-shadow:1px 1px 0 rgba(0,0,0,0.5);
 }
 
-/* ═══════════════════════════════════════════════
-   FLOATING PARTICLES CANVAS
-   ═══════════════════════════════════════════════ */
+/* RSVP buttons */
+.btn-group { display:flex; gap:12px; justify-content:center; margin-top:4px; flex-wrap:wrap; }
+.ms-btn {
+  font-family:'Silkscreen',monospace; font-size:10px; padding:10px 22px;
+  border:3px solid; cursor:pointer;
+  background:linear-gradient(180deg,#FFF,#F0E8D8);
+  transition:all 0.15s;
+}
+.ms-btn:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.12); }
+.ms-btn:active { transform:translateY(1px); }
+.ms-btn.yes { color:#3A7D3A; border-color:#5DA85D; }
+.ms-btn.no { color:#B84040; border-color:#C88080; }
+.ms-btn.selected { animation:flash 0.5s step-end 3; }
+@keyframes flash {
+  0%,100% { background:#FFD93D; border-color:#B8860B; color:#5C3D0E; }
+  50% { background:#FFF; }
+}
+.rsvp-msg { text-align:center; margin-top:12px; font-family:'VT323',monospace; font-size:16px; min-height:24px; }
 
-#particles-canvas {
-  position: fixed; inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
+/* Stats */
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; font-family:'VT323',monospace; font-size:16px; }
+.stat-cell { padding:8px 12px; text-align:center; border:1px solid rgba(0,0,0,0.1); }
+.stat-cell:nth-child(1) { background:rgba(255,143,171,0.07); }
+.stat-cell:nth-child(2) { background:rgba(200,162,255,0.07); }
+.stat-cell:nth-child(3) { background:rgba(124,205,124,0.07); }
+.stat-cell:nth-child(4) { background:rgba(91,164,230,0.07); }
 
-/* ═══════════════════════════════════════════════
-   RSVP BUTTONS (MapleStory item buttons)
-   ═══════════════════════════════════════════════ */
+/* Footer */
+.footer { text-align:center; padding:24px 0 12px; font-size:10px; color:#8B7B6B; }
 
-.rsvp-group {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  margin-top: 8px;
-  flex-wrap: wrap;
-}
-
-.ms-button {
-  font-family: 'Silkscreen', monospace;
-  font-size: 11px;
-  padding: 10px 24px;
-  border: 3px solid;
-  background: linear-gradient(180deg, #FFF 0%, #F0E8D8 100%);
-  cursor: pointer;
-  position: relative;
-  transition: all 0.12s;
-  image-rendering: pixelated;
-}
-.ms-button::after {
-  content: '';
-  position: absolute;
-  inset: 3px;
-  border: 1px solid rgba(255,255,255,0.5);
-  pointer-events: none;
-}
-.ms-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-.ms-button:active { transform: translateY(1px); }
-
-.ms-button.yes {
-  color: #3A7D3A;
-  border-color: var(--grass-dark);
-}
-.ms-button.yes:hover { background: linear-gradient(180deg, #E8F8E8 0%, #C8E8C8 100%); }
-
-.ms-button.no {
-  color: #B84040;
-  border-color: #C88080;
-}
-.ms-button.no:hover { background: linear-gradient(180deg, #FFF0F0 0%, #FFE0E0 100%); }
-
-.ms-button.selected {
-  animation: btn-flash 0.6s step-end 3;
-}
-@keyframes btn-flash {
-  0%,100% { background: #FFD93D; border-color: var(--gold-dark); color: var(--brown-dark); }
-  50% { background: #FFF; }
-}
-
-.rsvp-msg {
-  text-align: center;
-  margin-top: 14px;
-  font-family: 'VT323', monospace;
-  font-size: 16px;
-  color: var(--text-dark);
-  min-height: 24px;
-}
-
-/* ═══════════════════════════════════════════════
-   NPC DECORATION (small pixel animals)
-   ═══════════════════════════════════════════════ */
-
-.npc-row {
-  display: flex;
-  justify-content: center;
-  gap: 40px;
-  padding: 8px 0;
-  margin: 8px 0;
-}
-
-/* Pixel bunny */
-.pixel-bunny {
-  width: 4px; height: 4px;
-  margin: 4px 20px 16px 12px;
-  position: relative;
-  animation: idle-bounce 2.5s ease-in-out infinite;
-  box-shadow:
-    8px -4px #FFF, 12px -4px #FFF,
-    4px 0 #FFF, 8px 0 #FFF, 12px 0 #FFF, 16px 0 #FFF,
-    4px 4px #FFF, 8px 4px #FFB8B8, 12px 4px #FFB8B8, 16px 4px #FFF,
-    4px 8px #FFF, 8px 8px #FFF, 12px 8px #FFF, 16px 8px #FFF,
-    8px 12px #FFF, 12px 12px #FFF;
-}
-
-/* Pixel tree */
-.pixel-tree {
-  width: 4px; height: 4px;
-  margin: 8px 28px 24px 12px;
-  position: relative;
-  box-shadow:
-    12px -4px #5DA85D, 16px -4px #5DA85D,
-    8px 0 #4A9A4A, 12px 0 #6BCB77, 16px 0 #6BCB77, 20px 0 #4A9A4A,
-    4px 4px #3D8B3D, 8px 4px #5DA85D, 12px 4px #7CCD7C, 16px 4px #7CCD7C, 20px 4px #5DA85D, 24px 4px #3D8B3D,
-    0px 8px #3D8B3D, 4px 8px #4A9A4A, 8px 8px #6BCB77, 12px 8px #7CCD7C, 16px 8px #7CCD7C, 20px 8px #6BCB77, 24px 8px #4A9A4A, 28px 8px #3D8B3D,
-    12px 12px #8B6914, 16px 12px #8B6914,
-    12px 16px #8B6914, 16px 16px #8B6914,
-    12px 20px #8B6914, 16px 20px #8B6914;
-}
-
-/* ═══════════════════════════════════════════════
-   COUNTDOWN BAR (MS style HP bar)
-   ═══════════════════════════════════════════════ */
-
-.hp-bar-outer {
-  margin-top: 14px;
-  border: 2px solid var(--brown-dark);
-  background: #2C1810;
-  height: 20px;
-  position: relative;
-  overflow: hidden;
-}
-.hp-bar-fill {
-  height: 100%;
-  background: linear-gradient(180deg, #FF6B6B 0%, #CC4444 50%, #AA2222 100%);
-  width: 73%;
-  position: relative;
-}
-.hp-bar-fill::after {
-  content: '';
-  position: absolute;
-  top: 2px; left: 4px; right: 4px;
-  height: 4px;
-  background: rgba(255,255,255,0.3);
-  border-radius: 1px;
-}
-.hp-bar-text {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Silkscreen', monospace;
-  font-size: 8px;
-  color: #FFF;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
-}
-
-/* ═══════════════════════════════════════════════
-   SECTION DIVIDERS — grass strips between platforms
-   ═══════════════════════════════════════════════ */
-
-.grass-divider {
-  height: 18px;
-  margin: 8px -16px;
-  background:
-    repeating-linear-gradient(90deg,
-      var(--grass) 0px, #6BB86B 2px, var(--grass-dark) 4px,
-      var(--grass) 6px, var(--grass-dark) 8px, #6BB86B 10px,
-      var(--grass) 12px);
-  position: relative;
-}
-.grass-divider::before {
-  content: '';
-  position: absolute;
-  top: 3px; left: 0; right: 0;
-  height: 3px;
-  background:
-    repeating-linear-gradient(90deg,
-      transparent 0px, #90D890 4px, transparent 6px,
-      transparent 12px, #90D890 16px, transparent 18px);
-}
-
-/* ═══════════════════════════════════════════════
-   MUSIC TOGGLE
-   ═══════════════════════════════════════════════ */
-
+/* BGM button */
 .music-btn {
-  position: fixed;
-  bottom: 20px; right: 20px;
-  z-index: 100;
-  width: 44px; height: 44px;
-  border: 2px solid var(--gold-dark);
-  border-radius: 4px;
-  background: linear-gradient(180deg, var(--panel-bg) 0%, #F0E8D8 100%);
-  font-family: 'Silkscreen', monospace;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--brown-dark);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-  transition: all 0.2s;
+  position:fixed; bottom:20px; right:20px; z-index:200;
+  width:42px; height:42px; border:2px solid #B8860B; border-radius:4px;
+  background:linear-gradient(180deg,#FFFEF8,#F0E8D8);
+  font-family:'Silkscreen',monospace; font-size:15px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; color:#5C3D0E;
+  box-shadow:0 3px 10px rgba(0,0,0,0.1); transition:all 0.2s;
 }
-.music-btn:hover { transform: scale(1.1); }
-.music-btn.playing {
-  background: linear-gradient(180deg, #FFF8E0 0%, var(--gold-light) 100%);
-  border-color: var(--gold);
-  box-shadow: 0 0 14px rgba(218,165,32,0.3);
-}
+.music-btn:hover { transform:scale(1.1); }
+.music-btn.on { background:linear-gradient(180deg,#FFF8E0,#F0D060); border-color:#DAA520; box-shadow:0 0 14px rgba(218,165,32,0.3); }
 
-/* ═══════════════════════════════════════════════
-   MAPLE LEAF / PETAL FALL
-   ═══════════════════════════════════════════════ */
-
-.leaf {
-  position: fixed;
-  pointer-events: none;
-  z-index: 0;
-  font-size: 16px;
-  animation: leaf-fall linear infinite;
-}
-@keyframes leaf-fall {
-  0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
-  10% { opacity: 0.8; }
-  90% { opacity: 0.6; }
-  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-}
-
-/* ═══════════════════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════════════════ */
-
-@media (max-width: 480px) {
-  #map { padding: 16px 10px 40px; }
-  .platform { padding: 18px 12px 24px; }
-  .window-title { font-size: 7px; padding: 8px 10px; margin: -18px -12px 12px; }
-  .speech-bubble { font-size: 15px; padding: 10px 14px; }
-  .quest-name { font-size: 15px; }
-  .ms-button { font-size: 9px; padding: 8px 16px; }
+@media (max-width:480px) {
+  .hero-names { font-size:13px; }
+  .quest-name { font-size:14px; }
+  .card-title { font-size:7px; }
 }
 </style>
 </head>
 <body>
 
 <!-- ═══════════════════════════════════════════════
-     CLOUDS
+     P5.JS CANVAS — living MapleStory world
      ═══════════════════════════════════════════════ -->
-<div class="clouds-layer">
-  <div class="cloud"></div>
-  <div class="cloud"></div>
-  <div class="cloud"></div>
-  <div class="cloud"></div>
-  <div class="cloud"></div>
-</div>
+<div id="p5-canvas"></div>
 
 <!-- ═══════════════════════════════════════════════
-     FLOATING PARTICLES
+     CONTENT OVERLAY
      ═══════════════════════════════════════════════ -->
-<canvas id="particles-canvas"></canvas>
+<div id="content">
+<div class="container">
 
-<!-- ═══════════════════════════════════════════════
-     MAP (scrollable level)
-     ═══════════════════════════════════════════════ -->
-<div id="map">
+  <div class="hero-spacer"></div>
 
-  <!-- ══ PLATFORM 1: HERO — COUPLE NPCs ══ -->
-  <div class="platform">
-    <div class="window-title">♥ PLAYER 1 & PLAYER 2 JOINED THE PARTY ♥</div>
-
-    <div class="character-stage">
-      <div class="chibi-bride"></div>
-      <span class="couple-heart">♥</span>
-      <div class="chibi-groom"></div>
-    </div>
-
-    <div class="speech-bubble">
-      "Mau datang ke nikahan<br>kita nggak? 🎉"
-    </div>
-
-    <div style="text-align:center;margin-top:16px;">
-      <div style="font-family:'Press Start 2P',monospace;font-size:12px;color:var(--pink);margin-bottom:4px;">Dewi & Rama</div>
-      <div style="font-family:'VT323',monospace;font-size:20px;color:var(--brown-dark);">12 . 10 . 2025</div>
-      <div style="font-size:10px;color:#8B7B6B;margin-top:2px;">✦ SAVE THE DATE ✦</div>
-    </div>
+  <!-- HERO -->
+  <div class="hero-section">
+    <div class="hero-speech">"Mau datang ke nikahan kita nggak? 🎉"</div>
+    <div class="hero-names">Dewi & Rama</div>
+    <div class="hero-date">✦ 12 . 10 . 2025 ✦</div>
   </div>
 
-  <!-- ══ GRASS DIVIDER ══ -->
-  <div class="grass-divider"></div>
-
-  <!-- ══ PLATFORM 2: QUEST LOG ══ -->
-  <div class="platform">
-    <div class="window-title">📋 QUEST LOG</div>
-
-    <ul class="quest-list">
-      <li class="quest-item">
-        <span class="quest-checkbox done">☑</span>
-        <div class="quest-info">
-          <div class="quest-name">Side Quest: Lamaran</div>
-          <div class="quest-loc"><span class="icon">💍</span> Completed — 15 Maret 2025</div>
-        </div>
-        <span class="quest-reward">EXP +100</span>
-      </li>
-
-      <li class="quest-item">
-        <span class="quest-checkbox">☐</span>
-        <div class="quest-info">
-          <div class="quest-name">Main Quest: Akad Nikah</div>
-          <div class="quest-loc">
-            <span class="icon">🕌</span> Masjid Al-Hikmah<br>
-            <span class="icon">📍</span> Jl. Mawar No. 12, Bandung<br>
-            <span class="icon">🕗</span> 08:00 — 10:00 WIB
-          </div>
-        </div>
-        <span class="quest-reward">EXP +500</span>
-      </li>
-
-      <li class="quest-item">
-        <span class="quest-checkbox">☐</span>
-        <div class="quest-info">
-          <div class="quest-name">Main Quest: Resepsi</div>
-          <div class="quest-loc">
-            <span class="icon">🏰</span> Gedung Cempaka Ballroom<br>
-            <span class="icon">📍</span> Jl. Merdeka No. 50, Bandung<br>
-            <span class="icon">🕚</span> 11:00 — 17:00 WIB
-          </div>
-        </div>
-        <span class="quest-reward">EXP +500</span>
-      </li>
-
-      <li class="quest-item">
-        <span class="quest-checkbox">☐</span>
-        <div class="quest-info">
-          <div class="quest-name">Bonus Quest: After Party</div>
-          <div class="quest-loc">
-            <span class="icon">🎮</span> Retro Game Night @ Venue<br>
-            <span class="icon">🕖</span> 19:00 — 'til game over!
-          </div>
-        </div>
-        <span class="quest-reward">EXP +300</span>
-      </li>
-    </ul>
-
-    <!-- HP-style countdown bar -->
-    <div class="hp-bar-outer">
-      <div class="hp-bar-fill"></div>
-      <div class="hp-bar-text">QUEST EXPIRES IN: 68 DAYS</div>
-    </div>
-  </div>
-
-  <!-- ══ GRASS DIVIDER ══ -->
-  <div class="grass-divider"></div>
-
-  <!-- ══ PLATFORM 3: PLAYER STATS ══ -->
-  <div class="platform">
-    <div class="window-title">⚔ PLAYER STATS ⚔</div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-family:'VT323',monospace;font-size:16px;">
-      <div style="background:rgba(255,143,171,0.08);padding:8px 12px;border:1px solid rgba(255,143,171,0.2);text-align:center;">
-        <span style="color:var(--pink);">♥</span> Love Level: <b>100</b>
+  <!-- QUEST LOG -->
+  <div class="card">
+    <div class="card-title">📋 QUEST LOG</div>
+    <div class="quest-item">
+      <span class="quest-check done">☑</span>
+      <div class="quest-info">
+        <div class="quest-name">Side Quest: Lamaran</div>
+        <div class="quest-loc">💍 Completed — 15 Maret 2025</div>
       </div>
-      <div style="background:rgba(200,162,255,0.08);padding:8px 12px;border:1px solid rgba(200,162,255,0.2);text-align:center;">
-        <span style="color:var(--purple);">☕</span> Ngopi Skill: <b>99</b>
+      <span class="quest-exp">EXP +100</span>
+    </div>
+    <div class="quest-item">
+      <span class="quest-check">☐</span>
+      <div class="quest-info">
+        <div class="quest-name">Main Quest: Akad Nikah</div>
+        <div class="quest-loc">🕌 Masjid Al-Hikmah &nbsp;📍 Jl. Mawar 12, Bandung &nbsp;🕗 08:00-10:00</div>
       </div>
-      <div style="background:rgba(124,205,124,0.08);padding:8px 12px;border:1px solid rgba(124,205,124,0.2);text-align:center;">
-        <span style="color:var(--grass);">🍳</span> Masak Stat: <b>85</b>
+      <span class="quest-exp">EXP +500</span>
+    </div>
+    <div class="quest-item">
+      <span class="quest-check">☐</span>
+      <div class="quest-info">
+        <div class="quest-name">Main Quest: Resepsi</div>
+        <div class="quest-loc">🏰 Cempaka Ballroom &nbsp;📍 Jl. Merdeka 50, Bandung &nbsp;🕚 11:00-17:00</div>
       </div>
-      <div style="background:rgba(77,150,255,0.08);padding:8px 12px;border:1px solid rgba(77,150,255,0.2);text-align:center;">
-        <span style="color:var(--sky-top);">🎮</span> Gaming Duo: <b>95</b>
+      <span class="quest-exp">EXP +500</span>
+    </div>
+    <div class="quest-item">
+      <span class="quest-check">☐</span>
+      <div class="quest-info">
+        <div class="quest-name">Bonus Quest: After Party</div>
+        <div class="quest-loc">🎮 Retro Game Night @ Venue &nbsp;🕖 19:00 — game over!</div>
       </div>
+      <span class="quest-exp">EXP +300</span>
+    </div>
+    <div class="hp-bar"><div class="hp-fill"></div><div class="hp-text">QUEST EXPIRES IN: 68 DAYS</div></div>
+  </div>
+
+  <!-- STATS -->
+  <div class="card">
+    <div class="card-title">⚔ PLAYER STATS</div>
+    <div class="stats-grid">
+      <div class="stat-cell">♥ Love Level: <b>100</b></div>
+      <div class="stat-cell">☕ Ngopi Skill: <b>99</b></div>
+      <div class="stat-cell">🍳 Masak Stat: <b>85</b></div>
+      <div class="stat-cell">🎮 Gaming Duo: <b>95</b></div>
     </div>
   </div>
 
-  <!-- ══ NPC DECORATION ══ -->
-  <div class="npc-row">
-    <div class="pixel-bunny"></div>
-    <div class="pixel-tree"></div>
-    <div class="pixel-bunny" style="transform:scaleX(-1);"></div>
-  </div>
-
-  <!-- ══ PLATFORM 4: RSVP ══ -->
-  <div class="platform">
-    <div class="window-title">🎁 REWARD: KONFIRMASI KEHADIRAN</div>
-
-    <p style="text-align:center;font-family:'VT323',monospace;font-size:17px;color:var(--text-dark);margin-bottom:4px;">
-      Will you join our party?
-    </p>
-
-    <div class="rsvp-group">
-      <button class="ms-button yes" onclick="rsvp('yes')">✅ Hadir Dong!</button>
-      <button class="ms-button no" onclick="rsvp('no')">😢 Maaf, Ga Bisa</button>
+  <!-- RSVP -->
+  <div class="card">
+    <div class="card-title">🎁 REWARD: KONFIRMASI KEHADIRAN</div>
+    <p style="text-align:center;font-family:'VT323',monospace;font-size:17px;margin-bottom:4px;">Will you join our party?</p>
+    <div class="btn-group">
+      <button class="ms-btn yes" onclick="rsvp('yes')">✅ Hadir Dong!</button>
+      <button class="ms-btn no" onclick="rsvp('no')">😢 Maaf, Ga Bisa</button>
     </div>
-    <div class="rsvp-msg" id="rsvp-msg"></div>
+    <div class="rsvp-msg" id="msg"></div>
   </div>
 
-  <!-- ══ FOOTER ══ -->
-  <div style="text-align:center;padding:24px 0 8px;font-size:10px;color:#8B7B6B;">
-    <div style="margin-bottom:4px;">♪ Pixel Wedding March ♪</div>
-    © 2025 Dewi & Rama · Dibuat dengan ♥ dan pixel
-  </div>
+  <div class="footer">♪ Pixel Wedding March ♪<br>© 2025 Dewi & Rama · Dibuat dengan ♥ dan pixel</div>
 
 </div>
+</div>
+
+<button class="music-btn" id="mbtn" onclick="toggleBGM()">♪</button>
 
 <!-- ═══════════════════════════════════════════════
-     MUSIC TOGGLE
+     P5.JS SKETCH
      ═══════════════════════════════════════════════ -->
-<button class="music-btn" id="music-btn" onclick="toggleMusic()" title="Toggle BGM">♪</button>
-
 <script>
+/* ── RSVP ── */
+function rsvp(c) {
+  document.querySelectorAll('.ms-btn').forEach(b=>b.classList.remove('selected'));
+  const m=document.getElementById('msg');
+  if(c==='yes'){document.querySelector('.ms-btn.yes').classList.add('selected');m.innerHTML='🎉 <b>PARTY MEMBER CONFIRMED!</b><br>See you at the quest! ✨';}
+  else{document.querySelector('.ms-btn.no').classList.add('selected');m.innerHTML='😢 <b>QUEST DECLINED</b><br>Kamu akan dirindukan... tapi pestanya tetap jalan!';}
+}
+
+/* ── BGM ── */
+let actx=null,playing=false,bgmLoop=null;
+const notes=[{n:523,d:0.25},{n:659,d:0.25},{n:784,d:0.4},{n:0,d:0.1},{n:784,d:0.2},{n:880,d:0.2},{n:784,d:0.3},{n:0,d:0.15},{n:659,d:0.25},{n:587,d:0.25},{n:523,d:0.4},{n:0,d:0.1},{n:523,d:0.25},{n:587,d:0.25},{n:659,d:0.3},{n:523,d:0.5},{n:0,d:0.3},{n:440,d:0.25},{n:523,d:0.25},{n:587,d:0.4},{n:0,d:0.1},{n:659,d:0.3},{n:587,d:0.3},{n:523,d:0.6},{n:0,d:0.4}];
+function playBGM(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();let t=actx.currentTime;notes.forEach(({n,d})=>{if(!n){t+=d;return}const o=actx.createOscillator(),g=actx.createGain();o.type='square';o.frequency.value=n;g.gain.setValueAtTime(0.04,t);g.gain.exponentialRampToValueAtTime(0.001,t+d-0.02);o.connect(g);g.connect(actx.destination);o.start(t);o.stop(t+d);t+=d})}
+function toggleBGM(){const b=document.getElementById('mbtn');if(playing){playing=false;b.classList.remove('on');b.textContent='♪';if(bgmLoop)clearInterval(bgmLoop)}else{playing=true;b.classList.add('on');b.textContent='♫';playBGM();bgmLoop=setInterval(playBGM,9000)}}
+
 /* ═══════════════════════════════════════════════
-   FLOATING PARTICLES — hearts, lilies, stars
+   P5.JS — LIVING MAPLESTORY WORLD
    ═══════════════════════════════════════════════ */
-
-const cv = document.getElementById('particles-canvas');
-const ctx = cv.getContext('2d');
-let particles = [];
-
-function resize() {
-  cv.width = window.innerWidth;
-  cv.height = window.innerHeight;
-}
-window.addEventListener('resize', resize);
-resize();
-
-function drawHeart(x, y, s, a) {
-  ctx.globalAlpha = a;
-  ctx.fillStyle = '#FF8FAB';
-  const p = [
-    [1,0],[3,0],
-    [0,1],[1,1],[2,1],[3,1],[4,1],
-    [0,2],[1,2],[2,2],[3,2],[4,2],
-    [1,3],[2,3],[3,3],
-    [2,4],
-  ];
-  p.forEach(([px, py]) => ctx.fillRect(x + px*s, y + py*s, s, s));
-  // highlight
-  ctx.fillStyle = '#FFF';
-  ctx.fillRect(x + 1*s, y + 1*s, s, s);
-  ctx.globalAlpha = 1;
-}
-
-function drawLily(x, y, s, a) {
-  ctx.globalAlpha = a;
-  const h = s;
-  // stem
-  ctx.fillStyle = '#6BCB77';
-  ctx.fillRect(x + h*3, y + h*4, h, h*2);
-  ctx.fillRect(x + h*1, y + h*5, h, h);
-  ctx.fillRect(x + h*5, y + h*5, h, h);
-  // petals
-  ctx.fillStyle = '#F8F0FF';
-  ctx.fillRect(x + h*1, y + h*1, h, h*3);
-  ctx.fillRect(x + h*5, y + h*1, h, h*3);
-  ctx.fillStyle = '#FFB8D4';
-  ctx.fillRect(x + h*2, y, h, h*3);
-  ctx.fillRect(x + h*4, y, h, h*3);
-  ctx.fillStyle = '#FFF';
-  ctx.fillRect(x + h*3, y + h*1, h, h);
-  // center
-  ctx.fillStyle = '#FFD93D';
-  ctx.fillRect(x + h*3, y + h*2, h, h);
-  ctx.globalAlpha = 1;
-}
-
-function drawStar(x, y, s, a) {
-  ctx.globalAlpha = a;
-  ctx.fillStyle = '#FFD93D';
-  // Simple pixel star (5-point simplified)
-  const p = [
-    [2,0],[3,0],
-    [1,1],[2,1],[3,1],[4,1],
-    [0,2],[1,2],[2,2],[3,2],[4,2],[5,2],
-    [1,3],[2,3],[3,3],[4,3],
-    [2,4],[3,4],
-  ];
-  p.forEach(([px, py]) => ctx.fillRect(x + px*s, y + py*s, s, s));
-  ctx.globalAlpha = 1;
-}
-
-function spawnParticle() {
-  return {
-    x: Math.random() * cv.width,
-    y: cv.height + 30,
-    size: 1.5 + Math.random() * 2.5,
-    speed: 0.2 + Math.random() * 0.7,
-    wobble: Math.random() * Math.PI * 2,
-    wSpeed: 0.008 + Math.random() * 0.025,
-    alpha: 0.25 + Math.random() * 0.45,
-    type: ['heart','heart','lily','lily','star','star','lily','heart'][Math.floor(Math.random()*8)],
+const sketch = (p) => {
+  const PAL = {
+    skyTop: '#7EB8E8', skyMid: '#C8DFF0', skyBot: '#F0E0D0',
+    cloud: [255,255,255], cloudShadow: [220,230,240],
+    gold: '#DAA520', goldDark: '#B8860B', brown: '#8B6914',
+    pink: '#FF8FAB', pinkGlow: '#FFB8D4', purple: '#C8A2FF',
+    grass: '#7CCD7C', grassDark: '#5DA85D', grassLight: '#A0DDA0',
   };
-}
 
-// Pre-populate
-for (let i = 0; i < 28; i++) {
-  const p = spawnParticle();
-  p.y = Math.random() * cv.height;
-  particles.push(p);
-}
+  let clouds = [], particles = [], sparkles = [];
+  let scrollY = 0;
 
-function animateParticles() {
-  ctx.clearRect(0, 0, cv.width, cv.height);
+  p.setup = function() {
+    p.pixelDensity(1);
+    const c = p.createCanvas(p.windowWidth, p.windowHeight);
+    c.parent('p5-canvas');
+    p.colorMode(p.HSB, 360, 100, 100, 100);
+    p.frameRate(30);
 
-  for (let i = particles.length - 1; i >= 0; i--) {
-    const p = particles[i];
-    p.y -= p.speed;
-    p.wobble += p.wSpeed;
-    const ox = Math.sin(p.wobble) * 18;
-    const dx = p.x + ox;
+    // Generate clouds
+    for (let i=0; i<12; i++) {
+      clouds.push({ x:p.random(p.width), y:p.random(10,60), w:p.random(80,200), speed:p.random(0.1,0.4), layer:p.floor(p.random(3)) });
+    }
+    // Pre-populate particles
+    for (let i=0; i<32; i++) {
+      particles.push(spawnParticle(p.height));
+    }
+    for (let i=0; i<15; i++) {
+      sparkles.push({ x:p.random(p.width), y:p.random(p.height), s:p.random(1.5,3), phase:p.random(p.TWO_PI), speed:p.random(0.02,0.05), alpha:p.random(0.3,0.7) });
+    }
+  };
 
-    if (p.type === 'heart') drawHeart(dx, p.y, p.size, p.alpha);
-    else if (p.type === 'lily') drawLily(dx, p.y, p.size, p.alpha);
-    else drawStar(dx, p.y, p.size, p.alpha);
+  p.draw = function() {
+    scrollY = window.scrollY || 0;
+    const H = p.height;
+    const W = p.width;
 
-    if (p.y < -40) {
-      particles[i] = spawnParticle();
+    // Sky gradient
+    drawSky(W, H);
+
+    // Far clouds (slowest parallax)
+    drawClouds(0, 0.03);
+    // Mid clouds
+    drawClouds(1, 0.06);
+    // Near clouds
+    drawClouds(2, 0.12);
+
+    // Distant hills
+    drawHills(W, H);
+
+    // Grass platforms — positioned relative to scroll
+    drawPlatforms(W, H);
+
+    // Characters on hero platform
+    drawCouple(W, H);
+
+    // Decorative NPCs
+    drawNPCs(W, H);
+
+    // Particles (hearts, lilies, stars)
+    drawParticles(W, H);
+
+    // Sparkles
+    drawSparkles(W, H);
+  };
+
+  /* ── Sky Gradient ── */
+  function drawSky(W, H) {
+    for (let y=0; y<H; y++) {
+      let t = y/H;
+      // Shift hue slightly with scroll for dynamic sky
+      let h = 205 + p.sin(scrollY*0.0002)*3;
+      let s = 50 - t*25;
+      let b = 85 - t*25;
+      p.stroke(h, s, b);
+      p.line(0,y,W,y);
     }
   }
 
-  while (particles.length < 28) particles.push(spawnParticle());
-  if (particles.length > 35) particles = particles.slice(-35);
-
-  requestAnimationFrame(animateParticles);
-}
-animateParticles();
-
-/* ═══════════════════════════════════════════════
-   RSVP
-   ═══════════════════════════════════════════════ */
-
-function rsvp(choice) {
-  const msg = document.getElementById('rsvp-msg');
-  document.querySelectorAll('.ms-button').forEach(b => b.classList.remove('selected'));
-
-  if (choice === 'yes') {
-    document.querySelector('.ms-button.yes').classList.add('selected');
-    msg.innerHTML = '🎉 <b>PARTY MEMBER CONFIRMED!</b><br>See you at the quest, adventurer! ✨';
-  } else {
-    document.querySelector('.ms-button.no').classList.add('selected');
-    msg.innerHTML = '😢 <b>QUEST DECLINED</b><br>Kamu akan dirindukan... tapi pestanya tetap jalan!';
+  /* ── Clouds ── */
+  function drawClouds(layer, parallax) {
+    p.noStroke();
+    clouds.filter(c=>c.layer===layer).forEach(c => {
+      let cx = (c.x - scrollY*parallax) % (p.width + c.w*2) - c.w;
+      if (cx < -c.w) cx += p.width + c.w*2;
+      let alpha = layer===2 ? 0.7 : layer===1 ? 0.45 : 0.3;
+      p.fill(0,0,100,alpha);
+      let h = c.y + layer*15;
+      p.ellipse(cx, h, c.w*0.5, c.w*0.25);
+      p.ellipse(cx + c.w*0.3, h-8, c.w*0.35, c.w*0.22);
+      p.ellipse(cx + c.w*0.6, h-3, c.w*0.4, c.w*0.2);
+      p.ellipse(cx + c.w*0.2, h+5, c.w*0.45, c.w*0.18);
+      p.ellipse(cx + c.w*0.5, h+3, c.w*0.38, c.w*0.2);
+    });
   }
-}
 
-/* ═══════════════════════════════════════════════
-   8-BIT BGM — simple maple-ish melody
-   ═══════════════════════════════════════════════ */
-
-let audioCtx = null;
-let playing = false;
-let bgmTimer = null;
-
-const bgmNotes = [
-  { n:523, d:0.25 },{ n:659, d:0.25 },{ n:784, d:0.4 },{ n:0, d:0.1 },
-  { n:784, d:0.2 },{ n:880, d:0.2 },{ n:784, d:0.3 },{ n:0, d:0.15 },
-  { n:659, d:0.25 },{ n:587, d:0.25 },{ n:523, d:0.4 },{ n:0, d:0.1 },
-  { n:523, d:0.25 },{ n:587, d:0.25 },{ n:659, d:0.3 },{ n:523, d:0.5 },
-  { n:0, d:0.3 },
-  { n:440, d:0.25 },{ n:523, d:0.25 },{ n:587, d:0.4 },{ n:0, d:0.1 },
-  { n:659, d:0.3 },{ n:587, d:0.3 },{ n:523, d:0.6 },{ n:0, d:0.4 },
-];
-
-function playBGM() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  let t = audioCtx.currentTime;
-
-  bgmNotes.forEach(({ n, d }) => {
-    if (n === 0) { t += d; return; }
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'square';
-    osc.frequency.value = n;
-    gain.gain.setValueAtTime(0.04, t);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + d - 0.02);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start(t);
-    osc.stop(t + d);
-    t += d;
-  });
-}
-
-function toggleMusic() {
-  const btn = document.getElementById('music-btn');
-  if (playing) {
-    playing = false;
-    btn.classList.remove('playing');
-    btn.textContent = '♪';
-    if (bgmTimer) clearInterval(bgmTimer);
-  } else {
-    playing = true;
-    btn.classList.add('playing');
-    btn.textContent = '♫';
-    playBGM();
-    bgmTimer = setInterval(playBGM, 9000);
+  /* ── Hills ── */
+  function drawHills(W, H) {
+    p.noStroke();
+    let baseY = H*0.65;
+    // Far hills
+    p.fill(160,25,75,0.4);
+    p.beginShape();
+    p.vertex(0, H);
+    for (let x=0; x<=W; x+=20) {
+      let y = baseY + 40 + p.sin(x*0.003 + 1.5)*30 + p.sin(x*0.007)*20;
+      p.vertex(x, y);
+    }
+    p.vertex(W, H);
+    p.endShape(p.CLOSE);
+    // Near hills
+    p.fill(140,30,70,0.5);
+    p.beginShape();
+    p.vertex(0, H);
+    for (let x=0; x<=W; x+=20) {
+      let y = baseY + 70 + p.sin(x*0.004 + 3)*35 + p.sin(x*0.009 + 1)*25;
+      p.vertex(x, y);
+    }
+    p.vertex(W, H);
+    p.endShape(p.CLOSE);
   }
-}
 
-/* ═══════════════════════════════════════════════
-   FALLING LEAVES (maple-style)
-   ═══════════════════════════════════════════════ */
+  /* ── Grass Platforms ── */
+  function drawPlatforms(W, H) {
+    // Platform positions tied to sections
+    const platforms = [
+      { sy: H*0.38, w: 340 },   // hero
+      { sy: H*1.05, w: 380 },   // quest
+      { sy: H*1.85, w: 360 },   // stats
+      { sy: H*2.45, w: 350 },   // rsvp
+    ];
 
-function createLeaf() {
-  const leaf = document.createElement('div');
-  leaf.className = 'leaf';
-  leaf.textContent = ['🌸','🍃','✨','💮','🌺'][Math.floor(Math.random()*5)];
-  leaf.style.left = Math.random() * 100 + '%';
-  leaf.style.animationDuration = 8 + Math.random() * 10 + 's';
-  leaf.style.animationDelay = Math.random() * 8 + 's';
-  leaf.style.fontSize = 10 + Math.random() * 12 + 'px';
-  document.body.appendChild(leaf);
+    platforms.forEach(pl => {
+      let y = pl.sy - scrollY;
+      if (y < -50 || y > H+50) return;
+      let cx = W/2;
+      let hw = pl.w/2;
 
-  leaf.addEventListener('animationend', () => {
-    leaf.remove();
-    // Re-spawn occasionally
-    if (Math.random() < 0.5) createLeaf();
-  });
-}
+      // Dirt layer
+      p.noStroke();
+      p.fill(35,20,70);
+      p.rect(cx-hw-6, y-4, pl.w+12, 14, 3);
 
-// Spawn initial leaves
-for (let i = 0; i < 6; i++) createLeaf();
-// Keep spawning
-setInterval(() => { if (document.querySelectorAll('.leaf').length < 8) createLeaf(); }, 3000);
+      // Grass top
+      p.fill(120,55,60);
+      p.rect(cx-hw-4, y-8, pl.w+8, 10, 2);
+      // Grass highlights
+      p.fill(120,40,75);
+      for (let gx=cx-hw; gx<cx+hw; gx+=8) {
+        p.rect(gx, y-8, 4, 3);
+      }
 
-/* ═══════════════════════════════════════════════
-   PARALLAX CLOUDS ON SCROLL
-   ═══════════════════════════════════════════════ */
+      // Lily flowers on platform edges
+      let lilyX1 = cx-hw-20, lilyX2 = cx+hw+4;
+      if (y > 0 && y < H) {
+        drawLilyFlower(lilyX1, y-16, 6, 0.6);
+        drawLilyFlower(lilyX2, y-14, 5, 0.5);
+      }
+    });
+  }
 
-window.addEventListener('scroll', () => {
-  const scrolled = window.pageYOffset;
-  document.querySelectorAll('.cloud').forEach((c, i) => {
-    const speed = 0.02 + i * 0.01;
-    c.style.transform = `translateX(${scrolled * speed}px)`;
-  });
-});
+  /* ── Couple Characters ── */
+  function drawCouple(W, H) {
+    let cy = H*0.38 - scrollY - 30;
+    if (cy < -60 || cy > H+60) return;
+    let cx = W/2;
+
+    let bob = p.sin(p.frameCount*0.06)*1.5;
+
+    // Bride
+    drawChibiBride(cx-22, cy+bob, 4);
+    // Heart
+    let hx = cx+4, hy = cy-5+bob*0.5;
+    let hs = 2.5 + p.sin(p.frameCount*0.1)*0.3;
+    p.noStroke();
+    p.fill(350,70,95,0.85);
+    p.ellipse(hx-hs*1.5, hy, hs*2, hs*2);
+    p.ellipse(hx+hs*1.5, hy, hs*2, hs*2);
+    p.triangle(hx-hs*3.5, hy+hs*0.5, hx+hs*3.5, hy+hs*0.5, hx, hy+hs*4);
+    // Groom
+    drawChibiGroom(cx+30, cy+bob*0.7+2, 4);
+  }
+
+  /* ── Chibi Bride (pixel-perfect) ── */
+  function drawChibiBride(x, y, s) {
+    let px = (ox, oy, col) => { p.fill(col); p.noStroke(); p.rect(x+ox*s, y+oy*s, s, s); };
+    let H='#5D4037', F='#FFCCBC', E='#333', W='#FFF', D='#FF8FAB', V='rgba(255,255,255,0.7)';
+    // Veil
+    px(2,-2,V); px(3,-2,V); px(4,-2,V); px(5,-2,V); px(6,-2,V);
+    px(1,-1,V); px(2,-1,V); px(3,-1,V); px(4,-1,V); px(5,-1,V); px(6,-1,V); px(7,-1,V);
+    // Hair
+    px(1,0,H); px(2,0,H); px(3,0,H); px(4,0,H); px(5,0,H); px(6,0,H); px(7,0,H);
+    // Face
+    for(let i=0;i<=8;i++) px(i,1,F);
+    // Eyes
+    px(1,2,E); px(2,2,W); px(3,2,F); px(4,2,F); px(5,2,F); px(6,2,W); px(7,2,E);
+    // Blush
+    px(2,3,F); px(3,3,'#FFB8B8'); px(5,3,'#FFB8B8'); px(6,3,F);
+    // Mouth
+    px(3,4,'#FF6B9D'); px(4,4,'#FF6B9D'); px(5,4,'#FF6B9D');
+    // Dress
+    px(1,5,W); px(2,5,W); px(3,5,W); px(4,5,W); px(5,5,W); px(6,5,W); px(7,5,W);
+    for(let i=0;i<=8;i++) px(i,6,D);
+    px(0,7,D); px(2,7,D); px(3,7,D); px(4,7,D); px(5,7,D); px(6,7,D); px(8,7,D);
+  }
+
+  /* ── Chibi Groom ── */
+  function drawChibiGroom(x, y, s) {
+    let px=(ox,oy,col)=>{p.fill(col);p.noStroke();p.rect(x+ox*s,y+oy*s,s,s)};
+    let H='#1A1A1A', F='#FFCCBC', E='#333', W='#FFF', S='#1A3A5C';
+    // Hair
+    px(1,0,H); px(2,0,H); px(3,0,H); px(4,0,H); px(5,0,H); px(6,0,H); px(7,0,H);
+    // Face
+    for(let i=0;i<=8;i++) px(i,1,F);
+    // Eyes
+    px(1,2,E); px(2,2,W); px(3,2,F); px(4,2,F); px(5,2,F); px(6,2,W); px(7,2,E);
+    // Mouth
+    px(3,3,E); px(5,3,E);
+    // Suit
+    px(1,4,S); px(2,4,S); px(3,4,S); px(4,4,S); px(5,4,S); px(6,4,S); px(7,4,S);
+    px(0,5,S); px(1,5,S); px(2,5,W); px(3,5,S); px(4,5,S); px(5,5,W); px(6,5,S); px(7,5,S); px(8,5,S);
+    // Pants
+    px(1,7,H); px(2,7,H); px(3,7,H); px(4,7,H); px(5,7,H); px(6,7,H); px(7,7,H);
+    for(let i=1;i<=7;i++) px(i,6,H);
+  }
+
+  /* ── NPC Bunny ── */
+  function drawBunny(x, y, s) {
+    let px=(ox,oy,col)=>{p.fill(col);p.noStroke();p.rect(x+ox*s,y+oy*s,s,s)};
+    let W='#FFF', P='#FFB8B8';
+    px(2,-1,W); px(3,-1,W);
+    px(1,0,W); px(2,0,W); px(3,0,W); px(4,0,W);
+    px(1,1,W); px(2,1,P); px(3,1,P); px(4,1,W);
+    px(1,2,W); px(2,2,W); px(3,2,W); px(4,2,W);
+    px(2,3,W); px(3,3,W);
+  }
+
+  /* ── NPC Tree ── */
+  function drawTree(x, y, s) {
+    let px=(ox,oy,col)=>{p.fill(col);p.noStroke();p.rect(x+ox*s,y+oy*s,s,s)};
+    px(3,-1,'#5DA85D'); px(4,-1,'#5DA85D');
+    px(2,0,'#4A9A4A'); px(3,0,'#6BCB77'); px(4,0,'#6BCB77'); px(5,0,'#4A9A4A');
+    px(1,1,'#3D8B3D'); px(2,1,'#5DA85D'); px(3,1,'#7CCD7C'); px(4,1,'#7CCD7C'); px(5,1,'#5DA85D'); px(6,1,'#3D8B3D');
+    px(0,2,'#3D8B3D'); px(1,2,'#4A9A4A'); px(2,2,'#6BCB77'); px(3,2,'#7CCD7C'); px(4,2,'#7CCD7C'); px(5,2,'#6BCB77'); px(6,2,'#4A9A4A'); px(7,2,'#3D8B3D');
+    px(3,3,'#8B6914'); px(4,3,'#8B6914');
+    px(3,4,'#8B6914'); px(4,4,'#8B6914');
+    px(3,5,'#8B6914'); px(4,5,'#8B6914');
+  }
+
+  /* ── Lily Flower ── */
+  function drawLilyFlower(x, y, s, a) {
+    p.push();
+    p.noStroke();
+    // stem
+    p.fill(120,55,55,a);
+    p.rect(x+s*3, y+s*4, s, s*2);
+    // leaves
+    p.rect(x+s*1, y+s*5, s, s); p.rect(x+s*5, y+s*5, s, s);
+    // outer petals
+    p.fill(270,10,100,a);
+    p.rect(x+s*1, y+s*1, s, s*3); p.rect(x+s*5, y+s*1, s, s*3);
+    // inner petals
+    p.fill(340,30,95,a);
+    p.rect(x+s*2, y, s, s*3); p.rect(x+s*4, y, s, s*3);
+    // center
+    p.fill(0,0,100,a); p.rect(x+s*3, y+s, s, s);
+    p.fill(50,80,95,a); p.rect(x+s*3, y+s*2, s, s);
+    p.pop();
+  }
+
+  /* ── NPCs ── */
+  function drawNPCs(W, H) {
+    // Bunny & tree near quest section
+    let qy = H*1.05 - scrollY;
+    if (qy > 0 && qy < H) {
+      drawBunny(W*0.15, qy-16, 3);
+      drawTree(W*0.82, qy-34, 3);
+    }
+    // Bunny near RSVP
+    let ry = H*2.45 - scrollY;
+    if (ry > 0 && ry < H) {
+      drawBunny(W*0.2, ry-16, 3);
+      drawBunny(W*0.78, ry-16, 3);
+    }
+  }
+
+  /* ── Particles ── */
+  function spawnParticle(maxH) {
+    return {
+      x: p.random(p.width),
+      y: maxH + p.random(40,120),
+      speed: 0.3 + p.random()*0.8,
+      size: 2 + p.random()*3,
+      wobble: p.random(p.TWO_PI),
+      wspeed: 0.01 + p.random()*0.03,
+      alpha: 0.3 + p.random()*0.5,
+      type: ['heart','heart','lily','lily','star','star','lily'][p.floor(p.random(7))],
+    };
+  }
+
+  function drawParticles(W, H) {
+    let top = scrollY - 60;
+    let bot = scrollY + H + 60;
+
+    for (let i=particles.length-1; i>=0; i--) {
+      let pt = particles[i];
+      pt.y -= pt.speed;
+      pt.wobble += pt.wspeed;
+      let dx = pt.x + p.sin(pt.wobble)*20;
+
+      if (pt.y < top-40 || pt.y > bot+40) {
+        particles[i] = spawnParticle(bot);
+        continue;
+      }
+
+      if (pt.type==='heart') drawHeart(dx, pt.y, pt.size, pt.alpha);
+      else if (pt.type==='lily') drawLilyFlower(dx, pt.y, pt.size, pt.alpha);
+      else drawStarPixel(dx, pt.y, pt.size, pt.alpha);
+    }
+
+    while (particles.length < 32) particles.push(spawnParticle(bot));
+  }
+
+  function drawHeart(x, y, s, a) {
+    p.push(); p.noStroke();
+    p.fill(348,75,95,a);
+    p.ellipse(x-s*1.5, y, s*2, s*2);
+    p.ellipse(x+s*1.5, y, s*2, s*2);
+    p.triangle(x-s*3.5, y+s*0.5, x+s*3.5, y+s*0.5, x, y+s*4);
+    p.fill(0,0,100,a*0.6);
+    p.rect(x-s*0.8, y-s*1.5, s*0.8, s*1.2);
+    p.pop();
+  }
+
+  function drawStarPixel(x, y, s, a) {
+    p.push(); p.noStroke();
+    p.fill(50,85,100,a);
+    let px=(ox,oy)=>{p.rect(x+ox*s,y+oy*s,s,s)};
+    px(1,0); px(2,0);
+    px(0,1); px(1,1); px(2,1); px(3,1);
+    px(0,2); px(1,2); px(2,2); px(3,2);
+    px(1,3); px(2,3);
+    p.pop();
+  }
+
+  /* ── Sparkles ── */
+  function drawSparkles(W, H) {
+    let top = scrollY;
+    let bot = scrollY + H;
+    p.noStroke();
+    for (let sp of sparkles) {
+      if (sp.y < top-10 || sp.y > bot+10) { sp.y = p.random(top, bot); sp.x = p.random(W); }
+      sp.phase += sp.speed;
+      let a = sp.alpha * (0.5 + 0.5*p.sin(sp.phase));
+      p.fill(50,80,100,a);
+      p.ellipse(sp.x, sp.y, sp.s, sp.s);
+      p.fill(0,0,100,a*0.8);
+      p.ellipse(sp.x, sp.y, sp.s*0.4, sp.s*0.4);
+    }
+  }
+
+  /* ── Resize ── */
+  p.windowResized = function() {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
+  };
+};
+
+new p5(sketch);
 </script>
 
 </body>
